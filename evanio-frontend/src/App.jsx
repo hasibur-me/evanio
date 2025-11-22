@@ -95,8 +95,10 @@ function App() {
         <Route path="/careers" element={<Careers />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/refund" element={<RefundPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
         <Route path="/documentation" element={<Documentation />} />
         <Route path="/help" element={<HelpCenter />} />
         <Route path="/service-request" element={<ServiceRequest />} />
