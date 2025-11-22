@@ -11,9 +11,11 @@ if (import.meta.env.DEV) {
 
 // Validate API URL is set
 if (!VITE_API_URL) {
-  console.error('⚠️ VITE_API_URL is not set! Please set it in your environment variables.');
-  console.error('For Vercel: Set VITE_API_URL in Settings → Environment Variables');
-  console.error('For local: Create .env file with VITE_API_URL=https://evanio.up.railway.app/api');
+  if (import.meta.env.DEV) {
+    console.error('⚠️ VITE_API_URL is not set! Please set it in your environment variables.');
+    console.error('For Vercel: Set VITE_API_URL in Settings → Environment Variables');
+    console.error('For local: Create .env file with VITE_API_URL=https://evanio.up.railway.app/api');
+  }
 }
 
 // Create centralized Axios instance
@@ -42,7 +44,9 @@ API.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('API Request Error:', error);
+    if (import.meta.env.DEV) {
+      console.error('API Request Error:', error);
+    }
     return Promise.reject(error);
   }
 );
@@ -56,19 +60,23 @@ API.interceptors.response.use(
           return response;
         },
   async (error) => {
-    console.error('API Response Error:', {
-      url: error.config?.url,
-      fullURL: error.config?.baseURL + error.config?.url,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      message: error.message,
-      code: error.code,
-      responseData: error.response?.data
-    });
+    if (import.meta.env.DEV) {
+      console.error('API Response Error:', {
+        url: error.config?.url,
+        fullURL: error.config?.baseURL + error.config?.url,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        message: error.message,
+        code: error.code,
+        responseData: error.response?.data
+      });
+    }
 
     // Handle network errors specifically
     if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED' || error.message === 'Network Error') {
-      console.error('Network Error - Server may not be running or CORS issue');
+      if (import.meta.env.DEV) {
+        console.error('Network Error - Server may not be running or CORS issue');
+      }
       const errorMessage = import.meta.env.DEV 
         ? 'Cannot connect to server. Please make sure the server is running.'
         : 'Unable to connect to the server. Please try again later.';
@@ -100,9 +108,11 @@ API.interceptors.response.use(
               error.config.headers.Authorization = `Bearer ${refreshResponse.data.token}`;
               return API.request(error.config);
             }
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-          }
+                 } catch (refreshError) {
+                   if (import.meta.env.DEV) {
+                     console.error('Token refresh failed:', refreshError);
+                   }
+                 }
         }
         
         // If refresh fails or no refresh token, logout and redirect
