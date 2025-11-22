@@ -40,6 +40,7 @@ const SOURCE_COLORS = {
   chat: 'bg-green-500/20 text-green-300',
   email: 'bg-purple-500/20 text-purple-300',
   phone: 'bg-yellow-500/20 text-yellow-300',
+  service_request: 'bg-indigo-500/20 text-indigo-300',
   other: 'bg-gray-500/20 text-gray-300',
 };
 

@@ -30,7 +30,7 @@ const contactSchema = new mongoose.Schema({
   },
   source: {
     type: String,
-    enum: ['contact_form', 'chat', 'email', 'phone', 'other'],
+    enum: ['contact_form', 'chat', 'email', 'phone', 'service_request', 'other'],
     default: 'contact_form',
   },
   service: {
