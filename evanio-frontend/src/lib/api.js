@@ -3,9 +3,11 @@ import axios from 'axios';
 // Get API URL from environment variable - REQUIRED
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
-// Log API URL on startup
-console.log('API URL:', VITE_API_URL);
-console.log('Environment:', import.meta.env.MODE);
+// Log API URL on startup (only in development)
+if (import.meta.env.DEV) {
+  console.log('API URL:', VITE_API_URL);
+  console.log('Environment:', import.meta.env.MODE);
+}
 
 // Validate API URL is set
 if (!VITE_API_URL) {
@@ -47,10 +49,12 @@ API.interceptors.request.use(
 
 // Handle response errors
 API.interceptors.response.use(
-  (response) => {
-    console.log('API Response Success:', response.status, response.config.url);
-    return response;
-  },
+        (response) => {
+          if (import.meta.env.DEV) {
+            console.log('API Response Success:', response.status, response.config.url);
+          }
+          return response;
+        },
   async (error) => {
     console.error('API Response Error:', {
       url: error.config?.url,
