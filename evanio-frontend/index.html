@@ -4,18 +4,31 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/fav.png" />
     <link rel="apple-touch-icon" href="/fav.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#6366f1" />
+    
     <!-- Performance and Caching -->
     <meta http-equiv="Cache-Control" content="public, max-age=31536000" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Resource Hints for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://images.pexels.com" />
+    <link rel="dns-prefetch" href="https://evanio.up.railway.app" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" as="style" href="/src/index.css" />
+    
+    <!-- Mobile Optimizations -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
     <title>Evanio</title>
     <script>
       // Apply theme immediately before React loads to prevent flash

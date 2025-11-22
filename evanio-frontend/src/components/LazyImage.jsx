@@ -66,6 +66,8 @@ export const LazyImage = ({
       alt={alt}
       className={`${className} ${!isLoaded ? 'opacity-50 blur-sm' : 'opacity-100 blur-0'} transition-all duration-300`}
       loading="lazy"
+      decoding="async"
+      fetchpriority={props.fetchpriority || 'auto'}
       {...props}
     />
   );
