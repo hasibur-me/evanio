@@ -68,9 +68,39 @@ The Evanio platform is now split into two separate projects:
    - Sets start command: `npm start`
    - Deploy!
 
-5. **Get Backend URL**
-   - Railway provides a URL like: `https://evanio-backend-production.up.railway.app`
-   - Use this as your backend URL
+5. **Get Backend URL** ✅
+   
+   After successful deployment:
+   
+   **Option A: From Railway Dashboard**
+   1. Go to your Railway project dashboard
+   2. Click on your deployed service
+   3. Look for the "Domains" section or "Settings" tab
+   4. You'll see your backend URL, for example:
+      ```
+      https://evanio-backend-production.up.railway.app
+      ```
+   5. Copy this URL - you'll need it for the frontend!
+   
+   **Option B: From Service Settings**
+   1. Click on your service in Railway
+   2. Go to "Settings" tab
+   3. Scroll down to "Domains" section
+   4. Click "Generate Domain" if you don't have one
+   5. Your backend URL will be shown there
+   
+   **Option C: From Deployments Log**
+   1. Check your latest deployment log
+   2. Railway shows the service URL in the deployment output
+   
+   **✅ Test Your Backend URL:**
+   Open in browser or use curl:
+   ```
+   https://your-backend-url.up.railway.app/api/health
+   ```
+   Should return: `{"message": "Server is running", ...}`
+   
+   **📝 Save this URL** - You'll use it in the frontend configuration next!
 
 ### Option 2: Render
 
@@ -94,6 +124,28 @@ The Evanio platform is now split into two separate projects:
 5. **Deploy**
    - Click "Create Web Service"
    - Render will deploy automatically
+
+6. **Get Backend URL** ✅
+   
+   After successful deployment:
+   
+   1. Go to your Render dashboard
+   2. Click on your deployed service
+   3. Look at the top of the service page
+   4. You'll see your backend URL in the "URL" section, for example:
+      ```
+      https://evanio-backend.onrender.com
+      ```
+   5. Copy this URL - you'll need it for the frontend!
+   
+   **✅ Test Your Backend URL:**
+   Open in browser or use curl:
+   ```
+   https://your-backend-url.onrender.com/api/health
+   ```
+   Should return: `{"message": "Server is running", ...}`
+   
+   **📝 Save this URL** - You'll use it in the frontend configuration next!
 
 ### Option 3: VPS (DigitalOcean, AWS EC2, etc.)
 
@@ -328,8 +380,14 @@ FROM_EMAIL=noreply@evanio.com
 ### Frontend (.env)
 
 ```env
-# Backend API URL (REQUIRED)
-VITE_API_URL=https://api.evanio.com/api
+# Backend API URL (REQUIRED) - Use your deployed backend URL
+# Format: https://your-backend-url/api
+VITE_API_URL=https://your-backend-url.up.railway.app/api
+
+# Examples:
+# Railway: VITE_API_URL=https://evanio-backend.up.railway.app/api
+# Render: VITE_API_URL=https://evanio-backend.onrender.com/api
+# Custom domain: VITE_API_URL=https://api.evanio.com/api
 
 # UploadThing (Optional)
 VITE_UPLOADTHING_TOKEN=your_uploadthing_token
@@ -338,29 +396,100 @@ VITE_UPLOADTHING_TOKEN=your_uploadthing_token
 VITE_STRIPE_PUBLISHABLE_KEY=pk_live_your_stripe_publishable_key
 ```
 
+### 🔄 How to Use Your Backend URL in Frontend
+
+**Step 1: Get Your Backend URL**
+- Copy your backend URL from Railway/Render dashboard (see sections above)
+
+**Step 2: Format the URL Correctly**
+- Your backend URL should end with `/api`
+- Example: If your backend URL is `https://evanio-backend.up.railway.app`
+- Then use: `https://evanio-backend.up.railway.app/api`
+
+**Step 3: Set in Frontend Environment**
+- **For Vercel/Netlify:** Add as environment variable in dashboard:
+  - Key: `VITE_API_URL`
+  - Value: `https://your-backend-url.up.railway.app/api`
+
+- **For local development:** Add to `evanio-frontend/.env`:
+  ```env
+  VITE_API_URL=https://your-backend-url.up.railway.app/api
+  ```
+
+**Step 4: Rebuild Frontend**
+- After setting the environment variable, rebuild:
+  ```bash
+  cd evanio-frontend
+  npm run build
+  ```
+- Or redeploy on Vercel/Netlify (they'll pick up the new env var)
+
 ## Post-Deployment
 
-### 1. Test Backend
+### 1. Test Backend ✅
 
+**Get Your Backend URL First:**
+- **Railway:** Check dashboard → Service → Settings → Domains
+- **Render:** Check dashboard → Service → URL section
+
+**Test the Health Endpoint:**
 ```bash
-curl https://api.evanio.com/api/health
+curl https://your-backend-url.up.railway.app/api/health
 ```
 
-Should return:
+Or open in browser:
+```
+https://your-backend-url.up.railway.app/api/health
+```
+
+**Expected Response:**
 ```json
 {
   "message": "Server is running",
-  "timestamp": "...",
-  "uptime": ...
+  "timestamp": "2025-11-22T...",
+  "uptime": 123.456
 }
 ```
 
-### 2. Test Frontend
+**✅ If you see this, your backend is working!**
+
+### 2. Configure Frontend with Backend URL
+
+**Step 1: Copy Your Backend URL**
+- From Railway/Render dashboard
+- Example: `https://evanio-backend.up.railway.app`
+
+**Step 2: Set Frontend Environment Variable**
+
+**For Vercel:**
+1. Go to project dashboard → Settings → Environment Variables
+2. Add: `VITE_API_URL` = `https://your-backend-url.up.railway.app/api`
+3. Save and redeploy
+
+**For Netlify:**
+1. Go to Site settings → Environment variables
+2. Add: `VITE_API_URL` = `https://your-backend-url.up.railway.app/api`
+3. Save and redeploy
+
+**For Local Development:**
+Create `evanio-frontend/.env`:
+```env
+VITE_API_URL=https://your-backend-url.up.railway.app/api
+```
+
+### 3. Test Frontend
 
 - Visit your frontend URL
+- Open browser DevTools (F12) → Network tab
 - Try logging in/registering
+- Verify API calls are going to your backend URL
 - Check browser console for errors
-- Verify API calls are going to correct backend URL
+
+**✅ Success Indicators:**
+- API calls show your backend URL in Network tab
+- Login/Register works
+- No CORS errors in console
+- Data loads correctly
 
 ### 3. Create Admin User
 
