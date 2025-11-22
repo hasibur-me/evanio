@@ -4,7 +4,7 @@ import { Header } from '../../components/layout/Header';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { Card } from '../../components/ui/Card';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import { Users, MessageSquare, DollarSign, TrendingUp, ShoppingCart, Clock } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -23,7 +23,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/users/stats');
+      const response = await API.get('/users/stats');
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching stats:', error);

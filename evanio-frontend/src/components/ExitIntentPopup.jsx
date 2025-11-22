@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 import { Button } from './ui/Button';
 import { useTheme } from '../context/ThemeContext';
-import api from '../utils/api';
+import API from '@/lib/api';
 
 const POPUP_VARIANTS = [
   {
@@ -92,7 +92,7 @@ export const ExitIntentPopup = ({ variant = 'auto', onClose }) => {
 
     try {
       // Subscribe to newsletter
-      await api.post('/newsletter/subscribe', { email });
+      await API.post('/newsletter/subscribe', { email });
       
       trackEvent('exit_intent_conversion', { 
         variant: selectedVariant?.id,

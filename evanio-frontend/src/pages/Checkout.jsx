@@ -8,7 +8,7 @@ import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
-import api from '../utils/api';
+import API from '@/lib/api';
 import { CreditCard, Building2, CheckCircle2, X, Loader2, ArrowRight, UserPlus, LogIn } from 'lucide-react';
 
 export default function Checkout() {
@@ -167,12 +167,12 @@ export default function Checkout() {
         projectBrief,
       };
 
-      const response = await api.post('/orders', orderData);
+      const response = await API.post('/orders', orderData);
       setOrderId(response.data._id);
 
       if (paymentMethod === 'stripe') {
         // Create Stripe checkout session
-        const checkoutResponse = await api.post('/orders/create-checkout-session', {
+        const checkoutResponse = await API.post('/orders/create-checkout-session', {
           orderId: response.data._id,
         });
         window.location.href = checkoutResponse.data.url;
@@ -215,7 +215,7 @@ export default function Checkout() {
 
     try {
       // Submit bank transfer details
-      const response = await api.post('/orders/bank-transfer', {
+      const response = await API.post('/orders/bank-transfer', {
         orderId,
         bankTransferDetails: {
           transactionId: bankTransferDetails.transactionId.trim(),

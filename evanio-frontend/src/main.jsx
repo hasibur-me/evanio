@@ -2,6 +2,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+// Log API URL on startup
+console.log('API URL:', import.meta.env.VITE_API_URL);
+console.log('Environment:', import.meta.env.MODE);
+
 // Verify React is loaded before proceeding
 if (!React || typeof React !== 'object') {
   console.error('React is not properly loaded:', React);

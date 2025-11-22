@@ -9,7 +9,7 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
-import api from '../utils/api';
+import API from '@/lib/api';
 import { 
   Mail, 
   Phone, 
@@ -104,7 +104,7 @@ export default function Contact() {
 
     try {
       // Always save to Contact collection first (for admin dashboard)
-      const contactResponse = await api.post('/contact', {
+      const contactResponse = await API.post('/contact', {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
@@ -119,7 +119,7 @@ export default function Contact() {
       // If user is logged in, also create a ticket
       if (user) {
         try {
-          await api.post('/tickets', {
+          await API.post('/tickets', {
             subject: formData.subject || `Contact Form - ${formData.inquiryType}`,
             message: `Inquiry Type: ${formData.inquiryType}\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone || 'N/A'}\n\nMessage:\n${formData.message}`,
             type: formData.inquiryType === 'support' ? 'technical' : 'inquiry'

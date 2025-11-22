@@ -5,7 +5,7 @@ import { Header } from '../../components/layout/Header';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { Card } from '../../components/ui/Card';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import { 
   ShoppingBag, 
   CheckCircle2, 
@@ -83,12 +83,13 @@ export default function Orders() {
       if (showRefreshing) {
         setRefreshing(true);
       }
-      const response = await api.get('/orders/my-orders');
-      setOrders(response.data);
+      const response = await API.get('/orders/my-orders');
+      const ordersArray = Array.isArray(response.data) ? response.data : [];
+      setOrders(ordersArray);
       
       // Update selected order data if it's currently expanded
       if (selectedOrder) {
-        const updatedOrder = response.data.find(o => o._id === selectedOrder);
+        const updatedOrder = ordersArray.find(o => o._id === selectedOrder);
         if (updatedOrder) {
           setSelectedOrderData(updatedOrder);
         }
@@ -103,7 +104,7 @@ export default function Orders() {
 
   const fetchOrderDetails = async (orderId) => {
     try {
-      const response = await api.get(`/orders/single/${orderId}`);
+      const response = await API.get(`/orders/single/${orderId}`);
       setSelectedOrderData(response.data);
     } catch (error) {
       console.error('Error fetching order details:', error);
@@ -215,7 +216,7 @@ export default function Orders() {
             </Card>
           )}
 
-          {orders.length === 0 ? (
+          {(!Array.isArray(orders) || orders.length === 0) ? (
             <Card glass>
               <div className="text-center py-12">
                 <ShoppingBag className="w-16 h-16 text-white/50 mx-auto mb-4" />
@@ -229,7 +230,7 @@ export default function Orders() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {orders.map((order) => (
+              {Array.isArray(orders) && orders.map((order) => (
                 <Card glass key={order._id} className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1">
@@ -249,7 +250,7 @@ export default function Orders() {
                         <div className="mb-2">
                           <p className="text-white/80 text-sm">
                             <span className="font-semibold">Add-ons:</span>{' '}
-                            {order.addons.map((addon, idx) => (
+                            {Array.isArray(order.addons) && order.addons.map((addon, idx) => (
                               <span key={idx}>
                                 {addon.name} {idx < order.addons.length - 1 && ', '}
                               </span>

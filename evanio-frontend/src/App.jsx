@@ -70,11 +70,16 @@ import AdminSettings from './pages/admin/AdminSettings';
 import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 
+// Components
+import { LiveChat } from './components/LiveChat';
+
 function App() {
   return (
-    <PageTransition>
-      <ScrollToTop />
-      <Routes>
+    <>
+      <LiveChat />
+      <PageTransition>
+        <ScrollToTop />
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Homepage />} />
         <Route path="/about" element={<About />} />
@@ -338,7 +343,8 @@ function App() {
           }
         />
       </Routes>
-    </PageTransition>
+      </PageTransition>
+    </>
   );
 }
 

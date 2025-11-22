@@ -108,7 +108,7 @@ export default function AdminReviews() {
             </div>
           </div>
 
-          {reviews.length === 0 ? (
+          {(!Array.isArray(reviews) || reviews.length === 0) ? (
             <Card glass>
               <div className="text-center py-12">
                 <Star className="w-16 h-16 text-white/50 mx-auto mb-4" />
@@ -117,7 +117,7 @@ export default function AdminReviews() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {reviews.map((review) => (
+              {Array.isArray(reviews) && reviews.map((review) => (
                 <Card glass key={review._id} className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">

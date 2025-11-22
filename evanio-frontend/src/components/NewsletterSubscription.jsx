@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import api from '../utils/api';
+import API from '@/lib/api';
 import { Mail, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function NewsletterSubscription({ compact = false }) {
@@ -23,7 +23,7 @@ export default function NewsletterSubscription({ compact = false }) {
     setError('');
 
     try {
-      await api.post('/newsletter/subscribe', { email, name });
+      await API.post('/newsletter/subscribe', { email, name });
       setSubscribed(true);
       setEmail('');
       setName('');

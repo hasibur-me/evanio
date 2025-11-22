@@ -4,7 +4,7 @@ import { Sidebar } from '../../components/layout/Sidebar';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import {
   FileText,
   Download,
@@ -26,7 +26,7 @@ export default function Invoices() {
 
   const fetchInvoices = async () => {
     try {
-      const response = await api.get('/invoices/my-invoices');
+      const response = await API.get('/invoices/my-invoices');
       setInvoices(response.data);
     } catch (error) {
       console.error('Error fetching invoices:', error);
@@ -37,7 +37,7 @@ export default function Invoices() {
 
   const handleGenerateInvoice = async (orderId) => {
     try {
-      await api.post('/invoices/generate', { orderId });
+      await API.post('/invoices/generate', { orderId });
       fetchInvoices();
       alert('Invoice generated successfully!');
     } catch (error) {
@@ -51,7 +51,7 @@ export default function Invoices() {
       // Use relative URL for same-origin requests, or full URL if provided
       const pdfUrl = invoice.pdfUrl?.startsWith('http') 
         ? invoice.pdfUrl 
-        : `${import.meta.env.VITE_API_URL || '/api'}${invoice.pdfUrl}`;
+        : `${import.meta.env.VITE_API_URL || ''}${invoice.pdfUrl}`;
       window.open(pdfUrl, '_blank');
     } else {
       alert('PDF not available. Please contact support.');
@@ -60,7 +60,7 @@ export default function Invoices() {
 
   const handleSendInvoice = async (invoiceId) => {
     try {
-      await api.post(`/invoices/${invoiceId}/send`);
+      await API.post(`/invoices/${invoiceId}/send`);
       alert('Invoice sent successfully!');
     } catch (error) {
       console.error('Error sending invoice:', error);

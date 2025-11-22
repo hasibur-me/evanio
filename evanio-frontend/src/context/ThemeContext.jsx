@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import API from '@/lib/api';
 
 const ThemeContext = createContext();
 
@@ -27,7 +27,7 @@ export const ThemeProvider = ({ children }) => {
 
   const fetchThemeSettings = async () => {
     try {
-      const response = await api.get('/theme');
+      const response = await API.get('/theme');
       setTheme(response.data);
     } catch (error) {
       console.error('Error fetching theme settings:', error);
@@ -40,7 +40,7 @@ export const ThemeProvider = ({ children }) => {
 
   const updateTheme = async (newTheme) => {
     try {
-      const response = await api.put('/theme', newTheme);
+      const response = await API.put('/theme', newTheme);
       setTheme(response.data);
       return response.data;
     } catch (error) {

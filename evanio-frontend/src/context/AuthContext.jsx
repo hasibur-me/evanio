@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import api from '../utils/api';
+import API from '@/lib/api';
 
 const AuthContext = createContext();
 
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await api.get('/auth/me');
+      const response = await API.get('/auth/me');
       setUser(response.data);
       localStorage.setItem('user', JSON.stringify(response.data));
     } catch (error) {
@@ -44,8 +44,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, twoFactorToken = null) => {
     try {
-      console.log('Attempting login to:', api.defaults.baseURL + '/auth/login');
-      const response = await api.post('/auth/login', { email, password, twoFactorToken });
+      console.log('Attempting login to:', API.defaults.baseURL + '/auth/login');
+      const response = await API.post('/auth/login', { email, password, twoFactorToken });
       
       // Check if 2FA is required
       if (response.data && response.data.requires2FA === true) {
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password, referralCode = null) => {
     try {
-      const response = await api.post('/auth/register', { name, email, password, referralCode });
+      const response = await API.post('/auth/register', { name, email, password, referralCode });
       if (response.data && response.data.token) {
         localStorage.setItem('token', response.data.token);
         if (response.data.refreshToken) {

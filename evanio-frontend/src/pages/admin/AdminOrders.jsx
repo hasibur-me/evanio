@@ -196,7 +196,7 @@ export default function AdminOrders() {
             </div>
           </Card>
 
-          {orders.length === 0 ? (
+          {(!Array.isArray(orders) || orders.length === 0) ? (
             <Card glass>
               <div className="text-center py-12">
                 <ShoppingBag className="w-16 h-16 text-white/50 mx-auto mb-4" />
@@ -205,7 +205,7 @@ export default function AdminOrders() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {orders.map((order) => (
+              {Array.isArray(orders) && orders.map((order) => (
                 <Card glass key={order._id} className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1">
@@ -232,7 +232,7 @@ export default function AdminOrders() {
                         <div className="mb-2">
                           <p className="text-white/80 text-sm">
                             <span className="font-semibold">Add-ons:</span>{' '}
-                            {order.addons.map((addon, idx) => (
+                            {Array.isArray(order.addons) && order.addons.map((addon, idx) => (
                               <span key={idx}>
                                 {addon.name} {idx < order.addons.length - 1 && ', '}
                               </span>

@@ -5,7 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import { 
   Mail, 
   Phone, 
@@ -89,13 +89,16 @@ export default function AdminContacts() {
       console.log('Fetching contacts - Status:', statusFilter, 'Source:', sourceFilter, 'Page:', currentPage);
       console.log('API URL params:', params.toString());
 
-      const response = await api.get(`/contact/admin?${params.toString()}`);
+      const response = await API.get(`/contact/admin?${params.toString()}`);
       
-      console.log('Received contacts:', response.data.contacts.length, 'Total:', response.data.total);
+      const contactsData = Array.isArray(response.data.contacts) ? response.data.contacts : [];
+      const totalContacts = response.data.total || contactsData.length;
       
-      setContacts(response.data.contacts);
-      setFilteredContacts(response.data.contacts);
-      setTotalPages(response.data.totalPages);
+      console.log('Received contacts:', contactsData.length, 'Total:', totalContacts);
+      
+      setContacts(contactsData);
+      setFilteredContacts(contactsData);
+      setTotalPages(response.data.totalPages || 1);
       
       // Calculate stats (only on initial load or when filters are cleared)
       if (statusFilter === 'all' && sourceFilter === 'all' && !searchQuery) {
@@ -134,8 +137,8 @@ export default function AdminContacts() {
   const calculateStats = async () => {
     try {
       // Fetch all contacts for stats (without pagination)
-      const response = await api.get('/contact/admin?limit=10000');
-      const allContacts = response.data.contacts;
+      const response = await API.get('/contact/admin?limit=10000');
+      const allContacts = Array.isArray(response.data.contacts) ? response.data.contacts : [];
       
       const statsData = {
         total: response.data.total || allContacts.length,
@@ -155,7 +158,7 @@ export default function AdminContacts() {
 
   const handleViewContact = async (contactId) => {
     try {
-      const response = await api.get(`/contact/admin/${contactId}`);
+      const response = await API.get(`/contact/admin/${contactId}`);
       setSelectedContact(response.data);
       setUpdateStatus(response.data.status);
       setUpdateNotes(response.data.notes || '');
@@ -169,7 +172,7 @@ export default function AdminContacts() {
     if (!selectedContact) return;
 
     try {
-      await api.put(`/contact/admin/${selectedContact._id}`, {
+      await API.put(`/contact/admin/${selectedContact._id}`, {
         status: updateStatus,
         notes: updateNotes,
       });
@@ -188,7 +191,7 @@ export default function AdminContacts() {
     }
 
     try {
-      await api.delete(`/contact/admin/${contactId}`);
+      await API.delete(`/contact/admin/${contactId}`);
       fetchContacts();
     } catch (error) {
       console.error('Error deleting contact:', error);

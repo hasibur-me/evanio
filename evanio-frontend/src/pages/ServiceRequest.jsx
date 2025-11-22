@@ -9,7 +9,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
 import { allServices, getServiceById } from '@/data/services.js';
-import api from '../utils/api';
+import API from '@/lib/api';
 import { Upload, Send, CheckCircle2, X } from 'lucide-react';
 
 export default function ServiceRequest() {
@@ -83,7 +83,7 @@ export default function ServiceRequest() {
       }
 
       // Send request to backend (don't set Content-Type header - axios will handle FormData)
-      const response = await api.post('/services/request', formDataToSend);
+      const response = await API.post('/services/request', formDataToSend);
 
       setSubmitSuccess(true);
       

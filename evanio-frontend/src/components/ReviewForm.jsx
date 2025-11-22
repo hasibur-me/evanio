@@ -4,7 +4,7 @@ import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Textarea } from './ui/Textarea';
 import { Star, X } from 'lucide-react';
-import api from '../utils/api';
+import API from '@/lib/api';
 
 export default function ReviewForm({ orderId, serviceName, onSuccess, onCancel }) {
   const [rating, setRating] = useState(0);
@@ -31,7 +31,7 @@ export default function ReviewForm({ orderId, serviceName, onSuccess, onCancel }
     setError('');
 
     try {
-      await api.post('/reviews', {
+      await API.post('/reviews', {
         orderId,
         rating,
         title: title.trim(),

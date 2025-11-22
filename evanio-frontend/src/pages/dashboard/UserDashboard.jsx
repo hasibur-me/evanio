@@ -4,7 +4,7 @@ import { Header } from '../../components/layout/Header';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { Card } from '../../components/ui/Card';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import { FileText, MessageSquare, CreditCard, Bell, Rocket, ShoppingBag, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -29,29 +29,30 @@ export default function UserDashboard() {
       }
       
       const [documentsRes, ticketsRes, ordersRes] = await Promise.all([
-        api.get('/documents'),
-        api.get('/tickets'),
-        api.get('/orders/my-orders').catch(() => ({ data: [] })),
+        API.get('/documents'),
+        API.get('/tickets'),
+        API.get('/orders/my-orders').catch(() => ({ data: [] })),
       ]);
 
       const unreadNotifications = user?.notifications?.filter(n => !n.read).length || 0;
 
-      // Calculate total spent from completed orders
-      const completedOrders = ordersRes.data.filter(
+      // Calculate total spent from completed orders - ensure data is an array
+      const ordersData = Array.isArray(ordersRes.data) ? ordersRes.data : [];
+      const completedOrders = ordersData.filter(
         order => order.paymentStatus === 'completed'
       );
       const totalSpent = completedOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
 
       setStats({
-        orders: ordersRes.data.length,
-        documents: documentsRes.data.length,
+        orders: ordersData.length,
+        documents: Array.isArray(documentsRes.data) ? documentsRes.data.length : 0,
         totalSpent: totalSpent,
         unreadNotifications,
       });
 
       // Get recent orders (last 5) - sorted by most recent first
-      const sortedOrders = [...ordersRes.data].sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      const sortedOrders = [...ordersData].sort(
+        (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
       );
       setRecentOrders(sortedOrders.slice(0, 5));
     } catch (error) {

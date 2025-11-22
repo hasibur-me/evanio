@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Bot, User, Minimize2, Maximize2, Mail, Phone } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 import { useAuth } from '../context/AuthContext';
-import api from '../utils/api';
+import API from '@/lib/api';
 
 const FAQ_RESPONSES = {
   'hello': 'Hello! How can I help you today?',
@@ -34,6 +34,7 @@ export const LiveChat = () => {
   const welcomeMessageAdded = useRef(false);
 
   useEffect(() => {
+    console.log('LiveChat component mounted and rendering');
     loadChatHistory();
     checkOnlineStatus();
   }, []);
@@ -58,7 +59,7 @@ export const LiveChat = () => {
   const loadChatHistory = async () => {
     if (user) {
       try {
-        const response = await api.get('/tickets');
+        const response = await API.get('/tickets');
         // Load recent tickets as chat history
         // This is a simplified version - in production, you'd have a dedicated chat endpoint
       } catch (error) {
@@ -154,7 +155,7 @@ export const LiveChat = () => {
 
     try {
       // Submit form data to backend
-      const response = await api.post('/contact', {
+      const response = await API.post('/contact', {
         name: formData.name,
         email: formData.email,
         whatsapp: formData.whatsapp,
@@ -207,13 +208,14 @@ export const LiveChat = () => {
 
   const createSupportTicket = async (message, botResponse) => {
     try {
-      await api.post('/tickets', {
+      await API.post('/tickets', {
         subject: 'Chat Inquiry',
         message: `Chat Message: ${message}\n\nBot Response: ${botResponse}`,
         priority: 'normal',
       });
     } catch (error) {
       console.error('Error creating support ticket:', error);
+      // Silently fail - don't interrupt user experience
     }
   };
 
@@ -228,7 +230,18 @@ export const LiveChat = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all z-[9999]"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 transition-all"
+        style={{ 
+          zIndex: 99999,
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          width: '56px',
+          height: '56px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
         aria-label="Open chat"
       >
         <MessageCircle className="w-6 h-6" />
@@ -240,9 +253,17 @@ export const LiveChat = () => {
   }
 
   return (
-    <div className={`fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] z-[9999] transition-all ${
-      isMinimized ? 'h-14' : 'h-[600px]'
-    }`}>
+    <div 
+      className={`fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] transition-all ${
+        isMinimized ? 'h-14' : 'h-[600px]'
+      }`}
+      style={{ 
+        zIndex: 99999,
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px'
+      }}
+    >
       <GlassCard className="h-full flex flex-col border border-white/20 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/20">

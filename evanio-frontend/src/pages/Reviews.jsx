@@ -7,7 +7,7 @@ import { ReviewCard } from '../components/ReviewCard';
 import { TrustpilotReviews } from '../components/TrustpilotReviews';
 import { Star, Filter, Search, ThumbsUp } from 'lucide-react';
 import { Input } from '../components/ui/Input';
-import api from '../utils/api';
+import API from '@/lib/api';
 import { useAuth } from '../context/AuthContext';
 
 export default function Reviews() {
@@ -26,7 +26,7 @@ export default function Reviews() {
 
   const fetchReviews = async () => {
     try {
-      const response = await api.get('/reviews');
+      const response = await API.get('/reviews');
       setReviews(response.data.reviews || []);
       setFilteredReviews(response.data.reviews || []);
     } catch (error) {
@@ -38,7 +38,7 @@ export default function Reviews() {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/reviews/stats');
+      const response = await API.get('/reviews/stats');
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching review stats:', error);
@@ -51,7 +51,7 @@ export default function Reviews() {
       return;
     }
     try {
-      const response = await api.post(`/reviews/${reviewId}/helpful`);
+      const response = await API.post(`/reviews/${reviewId}/helpful`);
       // Update local state
       setReviews(prev => prev.map(r => 
         r._id === reviewId 
@@ -69,7 +69,9 @@ export default function Reviews() {
   };
 
   useEffect(() => {
-    let filtered = reviews;
+    // Ensure reviews is an array
+    const reviewsArray = Array.isArray(reviews) ? reviews : [];
+    let filtered = reviewsArray;
 
     // Filter by rating
     if (ratingFilter !== 'all') {

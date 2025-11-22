@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import { 
   MessageSquare, 
   Send, 
@@ -81,14 +81,16 @@ export default function Tickets() {
 
   const fetchTickets = async () => {
     try {
-      const response = await api.get('/tickets');
-      setTickets(response.data);
+      const response = await API.get('/tickets');
+      const ticketsArray = Array.isArray(response.data) ? response.data : [];
+      setTickets(ticketsArray);
       if (selectedTicket) {
-        const updated = response.data.find(t => t._id === selectedTicket._id);
+        const updated = ticketsArray.find(t => t._id === selectedTicket._id);
         if (updated) setSelectedTicket(updated);
       }
     } catch (error) {
       console.error('Error fetching tickets:', error);
+      setTickets([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
@@ -97,7 +99,7 @@ export default function Tickets() {
   const fetchOrders = async () => {
     try {
       setLoadingOrders(true);
-      const response = await api.get('/orders/my-orders');
+      const response = await API.get('/orders/my-orders');
       setOrders(response.data || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -109,7 +111,7 @@ export default function Tickets() {
 
   const fetchTicketDetails = async (ticketId) => {
     try {
-      const response = await api.get(`/tickets/${ticketId}`);
+      const response = await API.get(`/tickets/${ticketId}`);
       setSelectedTicket(response.data);
     } catch (error) {
       console.error('Error fetching ticket details:', error);
@@ -117,7 +119,9 @@ export default function Tickets() {
   };
 
   const filterTickets = () => {
-    let filtered = [...tickets];
+    // Ensure tickets is an array
+    const ticketsArray = Array.isArray(tickets) ? tickets : [];
+    let filtered = [...ticketsArray];
 
     if (searchQuery) {
       filtered = filtered.filter(ticket =>
@@ -145,7 +149,7 @@ export default function Tickets() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/tickets', { 
+      await API.post('/tickets', { 
         subject, 
         message, 
         type, 
@@ -171,7 +175,7 @@ export default function Tickets() {
     
     try {
       setIsReplying(true);
-      await api.post(`/tickets/${selectedTicket._id}/reply`, {
+      await API.post(`/tickets/${selectedTicket._id}/reply`, {
         message: replyMessage
       });
       setReplyMessage('');
@@ -327,14 +331,14 @@ export default function Tickets() {
                       className="w-full px-4 py-2.5 backdrop-blur-sm bg-white/20 border border-white/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-white bg-gray-900/80"
                     >
                       <option value="" className="bg-gray-800">None (General Support)</option>
-                      {orders.map((order) => (
+                      {Array.isArray(orders) && orders.map((order) => (
                         <option key={order._id} value={order._id} className="bg-gray-800">
                           {order.orderNumber} - {order.service} (${order.amount?.toFixed(2) || '0.00'})
                         </option>
                       ))}
                     </select>
                   )}
-                  {orders.length === 0 && !loadingOrders && (
+                  {Array.isArray(orders) && orders.length === 0 && !loadingOrders && (
                     <p className="text-xs text-white/60 mt-1">
                       No orders found. You can still create a ticket without linking to an order.
                     </p>
@@ -446,13 +450,13 @@ export default function Tickets() {
                   <div className="text-center py-12">
                     <MessageSquare className="w-16 h-16 text-white/50 mx-auto mb-4" />
                     <p className="text-white/80">
-                      {tickets.length === 0 ? 'No tickets yet. Create your first ticket!' : 'No tickets match your filters.'}
+                      {(!Array.isArray(tickets) || tickets.length === 0) ? 'No tickets yet. Create your first ticket!' : 'No tickets match your filters.'}
                     </p>
                   </div>
                 </Card>
               ) : (
                 <div className="space-y-4">
-                  {filteredTickets.map((ticket) => (
+                  {Array.isArray(filteredTickets) && filteredTickets.map((ticket) => (
                     <Card
                       key={ticket._id}
                       glass
@@ -581,7 +585,7 @@ export default function Tickets() {
                       </div>
                       <div className="backdrop-blur-sm bg-blue-500/30 rounded-2xl rounded-br-none px-4 py-3 border border-blue-400/50">
                         <p className="text-white whitespace-pre-wrap">{selectedTicket.message}</p>
-                        {selectedTicket.attachments && selectedTicket.attachments.length > 0 && (
+                        {selectedTicket.attachments && Array.isArray(selectedTicket.attachments) && selectedTicket.attachments.length > 0 && (
                           <div className="mt-2 space-y-1">
                             {selectedTicket.attachments.map((file, idx) => (
                               <a
@@ -603,7 +607,7 @@ export default function Tickets() {
                   </div>
 
                   {/* Replies */}
-                  {selectedTicket.replies && selectedTicket.replies.map((reply, idx) => (
+                  {selectedTicket.replies && Array.isArray(selectedTicket.replies) && selectedTicket.replies.map((reply, idx) => (
                     <div key={idx} className={reply.isAdmin ? 'flex justify-start' : 'flex justify-end'}>
                       <div className="max-w-2xl">
                         <div className={cn(
@@ -629,7 +633,7 @@ export default function Tickets() {
                             : "bg-blue-500/30 rounded-br-none border-blue-400/50"
                         )}>
                           <p className="text-white whitespace-pre-wrap">{reply.message}</p>
-                          {reply.attachments && reply.attachments.length > 0 && (
+                          {reply.attachments && Array.isArray(reply.attachments) && reply.attachments.length > 0 && (
                             <div className="mt-2 space-y-1">
                               {reply.attachments.map((file, fileIdx) => (
                                 <a

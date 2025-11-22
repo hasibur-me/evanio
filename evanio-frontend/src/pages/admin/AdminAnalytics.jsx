@@ -3,7 +3,7 @@ import { Header } from '../../components/layout/Header';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { Card } from '../../components/ui/Card';
 import { GlassBackground } from '../../components/GlassBackground';
-import api from '../../utils/api';
+import API from '@/lib/api';
 import {
   BarChart,
   Bar,
@@ -41,11 +41,11 @@ export default function AdminAnalytics() {
       setError('');
       
       const [usersRes, paymentsRes, ticketsRes, ordersRes, documentsRes] = await Promise.all([
-        api.get('/users').catch(() => ({ data: [] })),
-        api.get('/payments').catch(() => ({ data: [] })),
-        api.get('/tickets').catch(() => ({ data: [] })),
-        api.get('/orders/admin/all').catch(() => ({ data: [] })),
-        api.get('/documents/admin/all').catch(() => ({ data: [] })),
+        API.get('/users').catch(() => ({ data: [] })),
+        API.get('/payments').catch(() => ({ data: [] })),
+        API.get('/tickets').catch(() => ({ data: [] })),
+        API.get('/orders/admin/all').catch(() => ({ data: [] })),
+        API.get('/documents/admin/all').catch(() => ({ data: [] })),
       ]);
       
       setUsers(usersRes.data || []);
@@ -61,8 +61,14 @@ export default function AdminAnalytics() {
     }
   };
 
+  // Ensure all data is arrays before processing
+  const ordersArray = Array.isArray(orders) ? orders : [];
+  const usersArray = Array.isArray(users) ? users : [];
+  const ticketsArray = Array.isArray(tickets) ? tickets : [];
+  const documentsArray = Array.isArray(documents) ? documents : [];
+
   // Process data for charts - Revenue from orders (more accurate than payments)
-  const monthlyRevenue = orders
+  const monthlyRevenue = ordersArray
     .filter(o => o.paymentStatus === 'completed')
     .reduce((acc, order) => {
       const date = order.createdAt || order.timestamp || new Date();
@@ -81,7 +87,7 @@ export default function AdminAnalytics() {
     }));
 
   // User registration data
-  const userRegistrationData = (users || []).reduce((acc, user) => {
+  const userRegistrationData = usersArray.reduce((acc, user) => {
     if (!user.createdAt) return acc;
     const month = new Date(user.createdAt).toLocaleString('default', { month: 'short' });
     acc[month] = (acc[month] || 0) + 1;
@@ -97,34 +103,34 @@ export default function AdminAnalytics() {
 
   // Ticket status data
   const ticketStatusData = [
-    { name: 'Open', value: (tickets || []).filter(t => t.status === 'open').length },
-    { name: 'Closed', value: (tickets || []).filter(t => t.status === 'closed').length },
-    { name: 'In Progress', value: (tickets || []).filter(t => t.status === 'in-progress').length },
+    { name: 'Open', value: ticketsArray.filter(t => t.status === 'open').length },
+    { name: 'Closed', value: ticketsArray.filter(t => t.status === 'closed').length },
+    { name: 'In Progress', value: ticketsArray.filter(t => t.status === 'in-progress').length },
   ].filter(item => item.value > 0);
 
   // Payment status data from orders
   const paymentStatusData = [
-    { name: 'Completed', value: (orders || []).filter(o => o.paymentStatus === 'completed').length },
-    { name: 'Pending', value: (orders || []).filter(o => o.paymentStatus === 'pending').length },
-    { name: 'Failed', value: (orders || []).filter(o => o.paymentStatus === 'failed').length },
+    { name: 'Completed', value: ordersArray.filter(o => o.paymentStatus === 'completed').length },
+    { name: 'Pending', value: ordersArray.filter(o => o.paymentStatus === 'pending').length },
+    { name: 'Failed', value: ordersArray.filter(o => o.paymentStatus === 'failed').length },
   ].filter(item => item.value > 0);
 
   // Orders status data
-  const ordersData = [
-    { name: 'Completed', value: (orders || []).filter(o => o.orderStatus === 'completed').length },
-    { name: 'In Progress', value: (orders || []).filter(o => o.orderStatus === 'in-progress').length },
-    { name: 'Confirmed', value: (orders || []).filter(o => o.orderStatus === 'confirmed').length },
-    { name: 'Pending', value: (orders || []).filter(o => o.orderStatus === 'pending').length },
+  const ordersStatusData = [
+    { name: 'Completed', value: ordersArray.filter(o => o.orderStatus === 'completed').length },
+    { name: 'In Progress', value: ordersArray.filter(o => o.orderStatus === 'in-progress').length },
+    { name: 'Confirmed', value: ordersArray.filter(o => o.orderStatus === 'confirmed').length },
+    { name: 'Pending', value: ordersArray.filter(o => o.orderStatus === 'pending').length },
   ].filter(item => item.value > 0);
 
   // Calculate totals
-  const totalRevenue = orders
+  const totalRevenue = ordersArray
     .filter(o => o.paymentStatus === 'completed')
     .reduce((sum, o) => sum + (o.amount || 0), 0);
 
-  const totalUsers = users.length;
-  const totalOrders = orders.length;
-  const totalDocuments = documents.length;
+  const totalUsers = usersArray.length;
+  const totalOrders = ordersArray.length;
+  const totalDocuments = documentsArray.length;
 
   if (loading) {
     return (
@@ -340,11 +346,11 @@ export default function AdminAnalytics() {
 
             <Card glass>
               <h2 className="text-xl font-semibold mb-4 text-white">Orders Status</h2>
-              {ordersData.length > 0 ? (
+              {ordersStatusData.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={ordersData}
+                      data={ordersStatusData}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
@@ -353,7 +359,7 @@ export default function AdminAnalytics() {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {ordersData.map((entry, index) => (
+                      {ordersStatusData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
