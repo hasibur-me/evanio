@@ -10,22 +10,36 @@
 
 ### Environment Variables
 
-#### Frontend (Vercel)
-Make sure these are set in Vercel dashboard → Settings → Environment Variables:
+#### Frontend (Vercel) ⚠️ REQUIRED - Fix 404 Errors
+
+**Current Issue:** Frontend is calling `https://evanio.vercel.app/api` instead of Railway backend.
+
+**Fix Required:** Set environment variable in Vercel and redeploy.
 
 ```
 VITE_API_URL=https://evanio.up.railway.app/api
 ```
 
-**To set:**
-1. Go to your Vercel project dashboard
-2. Click **Settings** → **Environment Variables**
-3. Add variable:
+**Step-by-Step:**
+
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Click on your **evanio** project
+3. Click **Settings** → **Environment Variables**
+4. Click **Add New**
+5. Enter:
    - **Key:** `VITE_API_URL`
    - **Value:** `https://evanio.up.railway.app/api`
-   - **Environment:** Select all (Production, Preview, Development)
-4. Click **Save**
-5. **Redeploy** for changes to take effect
+   - **Environment:** Select **ALL** (Production, Preview, Development)
+6. Click **Save**
+
+**⚠️ CRITICAL: Redeploy After Setting Variable**
+
+7. Go to **Deployments** tab
+8. Click **"..."** on latest deployment → **Redeploy**
+9. **UNCHECK** "Use existing Build Cache" (important!)
+10. Click **Redeploy**
+
+**Why Redeploy?** Vite embeds environment variables at build time, so you must rebuild after setting the variable.
 
 #### Backend (Railway)
 Make sure these are set in Railway dashboard:
