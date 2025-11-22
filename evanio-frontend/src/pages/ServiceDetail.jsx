@@ -7,7 +7,7 @@ import { GlassBackground } from '../components/GlassBackground';
 import { GlassCard } from '../components/GlassCard';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { getServiceBySlug } from '../data/services';
+import { getServiceBySlug } from '../data/services.js';
 import { 
   Check, 
   ArrowRight, 
