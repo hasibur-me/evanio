@@ -8,7 +8,7 @@ import { GlassCard } from '../components/GlassCard';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
-import { allServices, getServiceById } from '@/data/services';
+import { allServices, getServiceById } from '@/data/services.js';
 import api from '../utils/api';
 import { Upload, Send, CheckCircle2, X } from 'lucide-react';
 

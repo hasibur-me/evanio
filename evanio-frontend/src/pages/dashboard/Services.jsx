@@ -4,7 +4,7 @@ import { Card } from '../../components/ui/Card';
 import { GlassBackground } from '../../components/GlassBackground';
 import { ServiceCard } from '../../components/ServiceCard';
 import { Button } from '../../components/ui/Button';
-import { allServices } from '@/data/services';
+import { allServices } from '@/data/services.js';
 import { Link } from 'react-router-dom';
 
 export default function Services() {
