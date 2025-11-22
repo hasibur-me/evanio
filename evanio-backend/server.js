@@ -1,6 +1,9 @@
+// Load environment variables FIRST, before any other imports
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { connectDB } from './src/config/database.js';
 import { errorHandler, notFound } from './src/middleware/errorHandler.js';
 
@@ -27,8 +30,6 @@ import referralRoutes from './src/routes/referralRoutes.js';
 import blogRoutes from './src/routes/blogRoutes.js';
 import invoiceRoutes from './src/routes/invoiceRoutes.js';
 import socialProofRoutes from './src/routes/socialProofRoutes.js';
-
-dotenv.config();
 
 const app = express();
 
@@ -172,6 +173,21 @@ app.get('/api/health', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
+// Validate required environment variables
+const requiredEnvVars = ['MONGODB_URI'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingEnvVars.forEach(varName => {
+    console.error(`   - ${varName}`);
+  });
+  console.error('\n💡 Please set these environment variables before starting the server.');
+  console.error('   In containers (Docker, Kubernetes, etc.), set them in your deployment configuration.');
+  console.error('   For local development, create a .env file in the evanio-backend directory.');
+  process.exit(1);
+}
+
 // Connect to MongoDB and start server
 const PORT = process.env.PORT || 5000;
 
@@ -184,7 +200,7 @@ const startServer = async () => {
       console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error('❌ Failed to start server:', error.message || error);
     process.exit(1);
   }
 };

@@ -2,7 +2,20 @@ import mongoose from 'mongoose';
 
 export const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    // Validate MongoDB URI is provided
+    const mongoURI = process.env.MONGODB_URI;
+    
+    if (!mongoURI || typeof mongoURI !== 'string' || mongoURI.trim() === '') {
+      throw new Error(
+        'MONGODB_URI is not defined or is empty. ' +
+        'Please set the MONGODB_URI environment variable. ' +
+        'Example: mongodb+srv://username:password@cluster.mongodb.net/dbname'
+      );
+    }
+
+    console.log('🔌 Attempting to connect to MongoDB...');
+    
+    const conn = await mongoose.connect(mongoURI, {
       serverSelectionTimeoutMS: 15000,
       socketTimeoutMS: 45000,
       connectTimeoutMS: 15000,
@@ -32,7 +45,7 @@ export const connectDB = async () => {
 
     return conn;
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    console.error('❌ MongoDB connection error:', error.message || error);
     throw error;
   }
 };
