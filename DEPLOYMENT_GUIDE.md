@@ -234,6 +234,66 @@ The Evanio platform is now split into two separate projects:
 
 ## Environment Variables
 
+### ⚠️ Important: Setting Environment Variables in Containers
+
+When deploying to containerized environments (Docker, Kubernetes, Railway, Render, etc.), you **MUST** set environment variables in your deployment configuration, not just in a `.env` file.
+
+**The server will now show a clear error message if required environment variables are missing:**
+```
+❌ Missing required environment variables:
+   - MONGODB_URI
+💡 Please set these environment variables before starting the server.
+   In containers (Docker, Kubernetes, etc.), set them in your deployment configuration.
+```
+
+### Setting Environment Variables by Platform:
+
+#### Railway:
+1. Go to your project dashboard
+2. Click on "Variables" tab
+3. Add each environment variable:
+   - Key: `MONGODB_URI`
+   - Value: `mongodb+srv://username:password@cluster.mongodb.net/dbname`
+
+#### Render:
+1. Go to your service dashboard
+2. Click on "Environment" tab
+3. Add each environment variable using "Add Environment Variable"
+
+#### Docker:
+Add to `docker-compose.yml`:
+```yaml
+services:
+  backend:
+    environment:
+      - MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
+      - JWT_ACCESS_SECRET=your_secret
+      - JWT_REFRESH_SECRET=your_refresh_secret
+```
+
+Or use `-e` flag:
+```bash
+docker run -e MONGODB_URI="mongodb+srv://..." evanio-backend
+```
+
+#### Kubernetes:
+Add to your deployment YAML:
+```yaml
+env:
+  - name: MONGODB_URI
+    value: "mongodb+srv://username:password@cluster.mongodb.net/dbname"
+```
+
+Or use Secrets:
+```yaml
+env:
+  - name: MONGODB_URI
+    valueFrom:
+      secretKeyRef:
+        name: evanio-secrets
+        key: mongodb-uri
+```
+
 ### Backend (.env)
 
 ```env
