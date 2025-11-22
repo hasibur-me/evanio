@@ -148,8 +148,8 @@ export default function Reviews() {
 
                 {/* Main Heading */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
-                  <span className="text-white drop-shadow-lg">Customer</span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 drop-shadow-lg">
+                  <span className="text-white drop-shadow-lg">Customer </span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 drop-shadow-lg">
                     Reviews
                   </span>
                 </h1>
