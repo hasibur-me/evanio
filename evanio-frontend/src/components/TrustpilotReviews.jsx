@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, Quote, Verified } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 
 const trustpilotReviews = [
@@ -87,185 +86,90 @@ const trustpilotReviews = [
 ];
 
 export const TrustpilotReviews = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const scrollContainerRef = useRef(null);
-  const autoScrollIntervalRef = useRef(null);
-
-  const reviewsPerView = 3; // Number of reviews visible at once
-  const totalSlides = Math.ceil(trustpilotReviews.length / reviewsPerView);
-
-  useEffect(() => {
-    // Clear any existing interval first
-    if (autoScrollIntervalRef.current) {
-      clearInterval(autoScrollIntervalRef.current);
-    }
-
-    // Only start auto-scroll if not paused
-    if (!isPaused && totalSlides > 1) {
-      autoScrollIntervalRef.current = setInterval(() => {
-        setCurrentIndex((prevIndex) => {
-          const nextIndex = (prevIndex + 1) % totalSlides;
-          return nextIndex;
-        });
-      }, 2000); // Auto-slide every 2 seconds
-    }
-
-    return () => {
-      if (autoScrollIntervalRef.current) {
-        clearInterval(autoScrollIntervalRef.current);
-      }
-    };
-  }, [isPaused, totalSlides]);
-
-  useEffect(() => {
-    if (scrollContainerRef.current && totalSlides > 0) {
-      const scrollAmount = currentIndex * 100;
-      scrollContainerRef.current.style.transform = `translateX(-${scrollAmount}%)`;
-    }
-  }, [currentIndex, totalSlides]);
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % totalSlides);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + totalSlides) % totalSlides);
-  };
 
   return (
-    <section className="py-20 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-green-500/30 to-emerald-500/30 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-              <Star className="w-6 h-6 text-green-400" />
+              <Star className="w-6 h-6 text-green-400 fill-green-400" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
               Reviews From Trustpilot
             </h2>
           </div>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-4">
             See what our clients are saying about us on Trustpilot
           </p>
-          <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="flex items-center justify-center gap-2">
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
               ))}
             </div>
-            <span className="text-white/90 font-semibold ml-2">5.0</span>
+            <span className="text-white/90 font-semibold ml-2 text-xl">5.0</span>
             <span className="text-white/70 text-sm ml-2">({trustpilotReviews.length} reviews)</span>
           </div>
         </div>
 
-        {/* Reviews Slider */}
-        <div
-          className="relative"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* Navigation Buttons */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all hover:scale-110"
-            aria-label="Previous reviews"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all hover:scale-110"
-            aria-label="Next reviews"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-
-          {/* Reviews Container */}
-          <div className="overflow-hidden mx-12">
-            <div
-              ref={scrollContainerRef}
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ width: `${totalSlides * 100}%` }}
+        {/* Reviews Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {trustpilotReviews.map((review, index) => (
+            <GlassCard
+              key={review.id}
+              className="p-6 flex flex-col group hover:scale-[1.02] transition-all duration-300 border-2 border-transparent hover:border-green-400/30 relative overflow-hidden"
+              style={{ animationDelay: `${index * 50}ms` }}
             >
-              {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                <div
-                  key={slideIndex}
-                  className="flex gap-6 flex-shrink-0"
-                  style={{ width: `${100 / totalSlides}%` }}
-                >
-                  {trustpilotReviews
-                    .slice(slideIndex * reviewsPerView, slideIndex * reviewsPerView + reviewsPerView)
-                    .map((review) => (
-                      <GlassCard
-                        key={review.id}
-                        className="p-6 flex-shrink-0 flex flex-col min-w-0"
-                        style={{ width: `${100 / reviewsPerView}%` }}
-                      >
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h3 className="font-bold text-white">{review.name}</h3>
-                              {review.verified && (
-                                <span className="px-2 py-0.5 bg-green-500/20 border border-green-400/30 rounded text-xs text-green-300">
-                                  Verified
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1 mb-2">
-                              {[...Array(review.rating)].map((_, i) => (
-                                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                              ))}
-                            </div>
-                            <p className="text-xs text-white/60">{review.date}</p>
-                          </div>
-                          <Quote className="w-8 h-8 text-green-400/50 flex-shrink-0" />
+              {/* Premium Background Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-emerald-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-bold text-white text-lg">{review.name}</h3>
+                      {review.verified && (
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-green-500/20 border border-green-400/30 rounded-full">
+                          <Verified className="w-3 h-3 text-green-400" />
+                          <span className="text-xs text-green-300 font-semibold">Verified</span>
                         </div>
-
-                        {/* Review Text */}
-                        <p className="text-white/90 text-sm leading-relaxed mb-4 flex-grow">
-                          {review.review}
-                        </p>
-
-                        {/* Service Badge */}
-                        <div className="mt-auto pt-4 border-t border-white/10">
-                          <span className="px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-xs text-blue-300">
-                            {review.service}
-                          </span>
-                        </div>
-                      </GlassCard>
-                    ))}
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 mb-2">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                    <p className="text-xs text-white/60">{review.date}</p>
+                  </div>
+                  <Quote className="w-6 h-6 text-green-400/50 flex-shrink-0" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* Dots Indicator */}
-        <div className="flex items-center justify-center gap-2 mt-8">
-          {Array.from({ length: totalSlides }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex
-                  ? 'bg-green-400 w-8'
-                  : 'bg-white/30 hover:bg-white/50'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
+                {/* Review Text */}
+                <div className="relative mb-4 flex-grow">
+                  <Quote className="absolute -top-2 -left-2 w-6 h-6 text-green-400/20" />
+                  <p className="text-white/90 text-sm leading-relaxed relative z-10">
+                    {review.review}
+                  </p>
+                </div>
+
+                {/* Service Badge */}
+                <div className="mt-auto pt-4 border-t border-white/10">
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-500/20 border border-blue-400/30 rounded-full text-xs text-blue-300 font-medium">
+                    {review.service}
+                  </span>
+                </div>
+              </div>
+            </GlassCard>
           ))}
         </div>
 
         {/* Trustpilot Badge */}
         <div className="flex items-center justify-center mt-8">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
+          <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/15 transition-all">
             <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center">
               <Star className="w-4 h-4 text-white fill-white" />
             </div>
