@@ -1,0 +1,37 @@
+{
+  "name": "evanio-backend",
+  "version": "1.0.0",
+  "description": "Evanio Backend API Server",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "seed-blog": "node scripts/seedBlogPosts.js"
+  },
+  "keywords": ["evanio", "api", "backend"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.0",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "multer": "^2.0.2",
+    "otplib": "^12.0.1",
+    "pdfkit": "^0.14.0",
+    "qrcode": "^1.5.3",
+    "resend": "^2.1.0",
+    "stripe": "^14.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
