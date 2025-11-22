@@ -121,7 +121,7 @@ export default function Reviews() {
   return (
     <GlassBackground>
       <Header />
-      <div className="min-h-screen py-20">
+      <div className="min-h-screen pt-12 md:pt-16 lg:pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Premium Hero Section */}
           <div className="text-center mb-16 relative">
