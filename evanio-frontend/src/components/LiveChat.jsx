@@ -256,14 +256,15 @@ export const LiveChat = () => {
 
   return (
     <div 
-      className={`fixed bottom-6 right-6 w-96 max-w-[calc(100vw-3rem)] transition-all ${
-        isMinimized ? 'h-14' : 'h-[600px]'
+      className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-96 max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-3rem)] transition-all ${
+        isMinimized ? 'h-14' : 'h-[calc(100vh-8rem)] sm:h-[600px] max-h-[600px]'
       }`}
       style={{ 
         zIndex: 99999,
         position: 'fixed',
-        bottom: '24px',
-        right: '24px'
+        bottom: '16px',
+        right: '16px',
+        touchAction: 'manipulation'
       }}
     >
       <GlassCard className="h-full flex flex-col border border-white/20 shadow-2xl">
